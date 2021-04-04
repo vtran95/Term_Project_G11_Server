@@ -1,0 +1,22 @@
+{
+  "name": "term_project_g11",
+  "version": "1.0.0",
+  "description": "Workout app",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vtran95/Term_Project_G11_Server.git"
+  },
+  "author": "Vincent Tran and Eric Kim",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vtran95/Term_Project_G11_Server/issues"
+  },
+  "homepage": "https://github.com/vtran95/Term_Project_G11_Server#readme",
+  "dependencies": {
+    "mysql": "^2.18.1"
+  }
+}
