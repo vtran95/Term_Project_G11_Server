@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 const con =  mysql.createPool( {
     host: 'us-cdbr-east-03.cleardb.com',
@@ -19,6 +21,79 @@ app.use(express.static('frontend'));
 app.use(express.json());
 //
 
+// Register user
+app.post('/api/v1/register', async (req, res) => {   
+
+    // let createTable = "CREATE TABLE IF NOT EXISTS User (id INT AUTO_INCREMENT, username VARCHAR(255) UNIQUE NOT NULL, password VARCHAR(255) UNIQUE NOT NULL, PRIMARY KEY (id))";
+
+    const username = req.body.username;
+    const pass = req.body.password;    
+    const encPass = await bcrypt.hash(pass, saltRounds);
+    const checkUser = `SELECT * FROM User WHERE username = ${username}`;
+    const registerSQL = `INSERT INTO User (username, email, password) VALUES ('${username}','${encPass}')`;  
+
+    if (!username || !encPass) {
+        res.status(400);
+        return res.send({'error': 'Missing parameters'});
+    }
+
+    con.query(checkUser, (error, results, fields) => {
+        if (error) {     
+            res.status(500);
+            res.send({'error': 'Server error occurred'})      
+        } else {       
+            if (results.length > 0) {
+                res.status(204);
+                res.send({msg: 'Username already exists'});
+            } else {
+                con.query(registerSQL, (err, results2, field2) => {      
+                    if (err) {     
+                        res.status(500);
+                        res.send({'error': 'Server error occurred'})      
+                    } else {       
+                        res.status(200);
+                        res.send({msg: 'User registered successfully'})       
+                    }    
+                });  
+            }      
+        }   
+    })
+});
+
+// Login user
+app.post('/api/v1/login', (req, res) => {   
+    const username = req.body.username;
+    const pass = req.body.password;
+
+    const searchUserSQL = `SELECT password FROM User WHERE username = '${username}'`;  
+
+    if (!username || !encPass) {
+        res.status(400);
+        return res.send({'error': 'Missing parameters'});
+    }
+
+    con.query(searchUserSQL, async (error, results, fields) => {      
+        if (error) {     
+            res.status(500);
+            res.send({'error': 'Server error occurred'})      
+        } else {       
+            if (results.length > 0) {
+                const comparePass = await bcrypt.compare(pass, results[0]);
+                if (comparePass) {
+                    res.status(200);
+                    res.send({msg: 'User logged in successfully'});
+                } else {
+                    res.status(204);
+                    res.send({msg: 'Username and password do not match'});
+                }
+            } else {
+                res.status(206);
+                res.send({msg: 'Username does not exist'});
+            }     
+        }    
+    });  
+});
+
 // GET - Retrieve all Workouts
 app.get('/api/v1/workouts', (req, res) => {
     // const createTableQuery = "CREATE TABLE IF NOT EXISTS Workout (id INT AUTO_INCREMENT, name VARCHAR(255), category VARCHAR(255), instructions VARCHAR(1024), equipment VARCHAR(255), amounts INT, PRIMARY KEY (id))";
@@ -26,13 +101,6 @@ app.get('/api/v1/workouts', (req, res) => {
 
     // const createTableQuery = "CREATE TABLE IF NOT EXISTS Session (id INT AUTO_INCREMENT, name VARCHAR(255), time FLOAT, PRIMARY KEY (id))";
     // const createStat = "INSERT INTO ApiStats (method, endpoint, requests) VALUES ('POST', '/api/v1/add_session', 0)";
-    // const createStat = "INSERT INTO ApiStats (method, endpoint, requests) VALUES ('DELETE', '/api/v1/delete_session/:name', 0)";
-    // const createStat = "INSERT INTO ApiStats (method, endpoint, requests) VALUES ('PUT', '/api/v1/update_session', 0)";
-    // const createStat = "INSERT INTO ApiStats (method, endpoint, requests) VALUES ('POST', '/api/v1/search_id/:id', 0)";
-    // const createStat = "INSERT INTO ApiStats (method, endpoint, requests) VALUES ('GET', '/api/v1/search_name/:name', 0)";
-    // const createStat = "INSERT INTO ApiStats (method, endpoint, requests) VALUES ('POST', '/api/v1/search_fletter/:fletter', 0)";
-    // const createStat = "INSERT INTO ApiStats (method, endpoint, requests) VALUES ('GET', '/api/v1/random', 0)";
-    // const createStat = "INSERT INTO ApiStats (method, endpoint, requests) VALUES ('GET', '/api/v1/filter/:category', 0)";
 
     // con.query(createStat, (err, result, fields) => {
     //     if (err) {
@@ -40,7 +108,7 @@ app.get('/api/v1/workouts', (req, res) => {
     //         return res.sendStatus(503);
     //     }
     //     // console.log('Session table created');
-    //     console.log('Session search random');
+    //     console.log('Session get all');
     //     return res.send();
     // });
 
@@ -343,6 +411,39 @@ app.put('/api/v1/update', (req, res) => {
     })
 });
 
+// GET - Retrieve all Sessions
+app.get('/api/v1/sessions', (req, res) => {
+
+    const getSQL = 'SELECT * FROM Session';
+
+    con.query(getSQL, (err, result, fields) => {
+        if (err) {
+            console.log(err);
+            return res.sendStatus(503);
+        }
+        if (result.length == 0) {
+            console.log(JSON.stringify(result));
+            res.status(404);
+            return res.send('No sessions found');
+        }
+
+        // const createStat = "INSERT INTO ApiStats (method, endpoint, requests) VALUES ('GET', '/api/v1/workouts', 0)";
+        const updateStat = "UPDATE ApiStats SET requests = requests + 1 WHERE endpoint = '/api/v1/sessions'";
+        con.query(updateStat, (statErr, statResult, statFields) => {
+            if (statErr) {
+                console.log(statErr); 
+                res.status(500);
+                return res.send('Something went wrong with the server');
+            }
+            console.log(JSON.stringify(statResult));
+        });
+    
+        console.log(JSON.stringify(result));
+        res.status(200);
+        return res.send(JSON.stringify(result));
+    });
+});
+
 // POST - Create a new workout session
 app.post('/api/v1/add_session', (req, res) => {
     const name = req.body.name;
@@ -416,7 +517,7 @@ app.put('/api/v1/update_session', (req, res) => {
     const name = req.body.name;
     const time = req.body.time;
 
-    const updateSQL = `UPDATE Workout SET Workout.time = '${time}' WHERE Workout.name = '${name}'`;
+    const updateSQL = `UPDATE Workout SET time = '${time}' WHERE Workout.name = '${name}'`;
     con.query(updateSQL, (err, result, fields) => {
         if (err) {
             console.log(err);
