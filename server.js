@@ -175,7 +175,7 @@ app.post('/api/v1/login', cors(corsOptions), (req, res) => {
 });
 
 // Logout
-app.delete('/api/v1/logout', (req, res) => {
+app.delete('/api/v1/logout', cors(corsOptions), (req, res) => {
     console.log('Attempt logout');
     if (req.session) {
         req.session.destroy( err => {
@@ -203,7 +203,7 @@ app.get('/api/v1/workouts', cors(corsOptions), async (req, res) => {
     console.log("session and params");
     console.log(req.session);
     console.log(req.query);
-    const acceptRequest = await auth(req.session.username, req.query.apikey);
+    const acceptRequest = await auth(req.query.apikey);
     if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
@@ -248,7 +248,7 @@ app.post('/api/v1/add_exercise', cors(corsOptions), async (req, res) => {
         return res.send({msg: 'Must be logged in!'});
     }
     console.log(req.session);
-    const acceptRequest = await auth(req.session.username, req.query.apikey);
+    const acceptRequest = await auth(req.query.apikey);
     if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
@@ -299,7 +299,7 @@ app.get('/api/v1/random', cors(corsOptions), async (req, res) => {
         return res.send({msg: 'Must be logged in!'});
     }
     console.log(req.session);
-    const acceptRequest = await auth(req.session.username, req.query.apikey);
+    const acceptRequest = await auth(req.query.apikey);
     if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
@@ -337,7 +337,7 @@ app.post('/api/v1/search_fletter/:fletter', cors(corsOptions), async (req, res) 
         return res.send({msg: 'Must be logged in!'});
     }
     console.log(req.session);
-    const acceptRequest = await auth(req.session.username, req.query.apikey);
+    const acceptRequest = await auth(req.query.apikey);
     if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
@@ -388,7 +388,7 @@ app.get('/api/v1/search_name/:name', cors(corsOptions), async (req, res) => {
         return res.send({msg: 'Must be logged in!'});
     }
     console.log(req.session);
-    const acceptRequest = await auth(req.session.username, req.query.apikey);
+    const acceptRequest = await auth(req.query.apikey);
     if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
@@ -436,7 +436,7 @@ app.post('/api/v1/search_id/:id', cors(corsOptions), async (req, res) => {
         return res.send({msg: 'Must be logged in!'});
     }
     console.log(req.session);
-    const acceptRequest = await auth(req.session.username, req.query.apikey);
+    const acceptRequest = await auth(req.query.apikey);
     if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
@@ -481,7 +481,7 @@ app.get('/api/v1/category/:category', cors(corsOptions), async (req, res) => {
         return res.send({msg: 'Must be logged in!'});
     }
     console.log(req.session);
-    const acceptRequest = await auth(req.session.username, req.query.apikey);
+    const acceptRequest = await auth(req.query.apikey);
     if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
@@ -527,7 +527,7 @@ app.delete('/api/v1/delete/:name', cors(corsOptions), async (req, res) => {
         return res.send({msg: 'Must be logged in!'});
     }
     console.log(req.session);
-    const acceptRequest = await auth(req.session.username, req.query.apikey);
+    const acceptRequest = await auth(req.query.apikey);
     if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
@@ -569,7 +569,7 @@ app.put('/api/v1/update', cors(corsOptions), async (req, res) => {
         return res.send({msg: 'Must be logged in!'});
     }
     console.log(req.session);
-    const acceptRequest = await auth(req.session.username, req.query.apikey);
+    const acceptRequest = await auth(req.query.apikey);
     if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
@@ -611,7 +611,7 @@ app.get('/api/v1/sessions', cors(corsOptions), async (req, res) => {
         return res.send({msg: 'Must be logged in!'});
     }
     console.log(req.session);
-    const acceptRequest = await auth(req.session.username, req.query.apikey);
+    const acceptRequest = await auth(req.query.apikey);
     if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
@@ -655,7 +655,7 @@ app.post('/api/v1/add_session', cors(corsOptions), async (req, res) => {
         return res.send({msg: 'Must be logged in!'});
     }
     console.log(req.session);
-    const acceptRequest = await auth(req.session.username, req.query.apikey);
+    const acceptRequest = await auth(req.query.apikey);
     if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
@@ -703,7 +703,7 @@ app.delete('/api/v1/delete_session/:name', cors(corsOptions), async (req, res) =
         return res.send({msg: 'Must be logged in!'});
     }
     console.log(req.session);
-    const acceptRequest = await auth(req.session.username, req.query.apikey);
+    const acceptRequest = await auth(req.query.apikey);
     if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
@@ -745,7 +745,7 @@ app.put('/api/v1/update_session', cors(corsOptions), async (req, res) => {
         return res.send({msg: 'Must be logged in!'});
     }
     console.log(req.session);
-    const acceptRequest = await auth(req.session.username, req.query.apikey);
+    const acceptRequest = await auth(req.query.apikey);
     if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
@@ -789,12 +789,7 @@ app.put('/api/v1/update_session', cors(corsOptions), async (req, res) => {
 // GET - Retrieve all API endpoint stats
 app.get('/api/v1/admin', cors(corsOptions), async (req, res) => {
     console.log(req.session);
-    if ( !req.session || !req.session.username || !(await authenticateAdmin(req.session.username)) ) {
-        res.status(401);
-        return res.send({msg: 'Must be logged in to admin!'});
-    }
-    // const isAdmin = await authenticateAdmin(req.session.username);
-    // if (!isAdmin) {
+    // if ( !req.session || !req.session.username || !(await authenticateAdmin(req.session.username)) ) {
     //     res.status(401);
     //     return res.send({msg: 'Must be logged in to admin!'});
     // }
@@ -822,22 +817,23 @@ app.listen(process.env.PORT || 5000, (err) => {
 } );
 
 // Authenticate API key
-const auth = (username, rcvKey) => {
-    console.log(username);
+const auth = (rcvKey) => {
+    // console.log(username);
     console.log(rcvKey);
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
         // let checkKey = `SELECT * FROM Apikey WHERE username = '${username}'`;
         let checkKey = `SELECT * FROM Apikey WHERE userkey = '${rcvkey}'`;
         console.log('auth');
         con.query(checkKey, (error, results, fields) => {
             console.log(results);
             if (error) {
-                console.log('Error1');         
+                console.log('Error1');  
+                reject(error);       
             } else {       
-                // if (results.length > 0 && (results[0].userkey == rcvKey)) {
-                //     resolve(true);
-                // }
-                resolve(true);
+                // && (results[0].userkey == rcvKey)
+                if (results.length > 0) {
+                    resolve(true);
+                }
             }
             resolve(false);
         })
