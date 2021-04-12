@@ -63,31 +63,31 @@ app.post('/api/v1/register', async (req, res) => {
         if (error) {
             console.log('Error1');     
             res.status(500);
-            res.send({'error': 'Server error occurred'})      
+            return res.send({'error': 'Server error occurred'})      
         } else {       
             if (results.length > 0) {
                 console.log('User already exists');
                 res.status(204);
-                res.send({msg: 'Username already exists'});
+                return res.send({msg: 'Username already exists'});
             } else {
                 con.query(registerSQL, (err, results2, field2) => {      
                     if (err) {
                         console.log('Error2');
                         res.status(500);
-                        res.send({'error': 'Server error occurred'})      
+                        return res.send({'error': 'Server error occurred'})      
                     } else {
                         con.query(createAPIkey, (err3, results3, field3) => {
                             if (err3) {
                                 console.log('Error3');
                                 res.status(500);
-                                res.send({'error': 'Server error occurred'})      
+                                return res.send({'error': 'Server error occurred'})      
                             } else {
                                 console.log(`User ${username} registered`);
                                 console.log(`User ${username} apikey: ${apikey}`);
                                 req.session.loggedin = true;
                                 req.session.username = username;
                                 res.status(200);
-                                res.send({apikey: `${apikey}`});
+                                return res.send({apikey: `${apikey}`});
                             }
                         })
                     }
@@ -116,7 +116,7 @@ app.post('/api/v1/login', (req, res) => {
         if (error) { 
             console.log('server err');    
             res.status(500);
-            res.send({'error': 'Server error occurred'})      
+            return res.send({'error': 'Server error occurred'})      
         } else {       
             if (results.length > 0) {
                 const comparePass = await bcrypt.compare(pass, results[0].password);
@@ -125,18 +125,19 @@ app.post('/api/v1/login', (req, res) => {
                     req.session.loggedin = true;
                     req.session.username = username;
                     res.status(200);
+                    console.log(req.session);
                     if (username == process.env.admin) {
-                        res.send({msg: 'admin'});
+                        return res.send({msg: 'admin'});
                     } else {
-                        res.send({msg: 'User logged in successfully'});
+                        return res.send({msg: 'User logged in successfully'});
                     }
                 } else {
                     res.status(204);
-                    res.send({msg: 'Username and password do not match'});
+                    return res.send({msg: 'Username and password do not match'});
                 }
             } else {
                 res.status(206);
-                res.send({msg: 'Username does not exist'});
+                return res.send({msg: 'Username does not exist'});
             }     
         }    
     });  
