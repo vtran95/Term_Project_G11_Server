@@ -23,7 +23,7 @@ app.use('*', cors());
 app.set('trust proxy', 1);
 app.use(session({
     secret: 'secret',
-    resave: true,
+    resave: false,
     saveUninitialized:  true,
     cookie: {secure: true}
 }));
