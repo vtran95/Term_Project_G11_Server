@@ -20,10 +20,12 @@ const con =  mysql.createPool( {
 const app = express();
 
 app.use('*', cors());
+app.set('trust proxy', 1);
 app.use(session({
     secret: 'secret',
     resave: true,
-    saveUninitialized:  true
+    saveUninitialized:  true,
+    cookie: {secure: true}
 }));
 app.use(bodyParser.urlencoded({extended: true}));
 
