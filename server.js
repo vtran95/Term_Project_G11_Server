@@ -29,7 +29,7 @@ const app = express();
 const whitelist = ['https://comp4537-termproj.herokuapp.com', 'http://localhost:5000'];
 const corsOptions = {
     origin: function (origin, callback) {
-        if (whitelist.indexOf(origin) !== -1) {
+        if (whitelist.indexOf(origin) !== -1 || !origin) {
           callback(null, true);
         } else {
           callback(new Error('Not allowed by CORS'));
