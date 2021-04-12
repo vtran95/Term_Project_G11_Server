@@ -112,6 +112,8 @@ app.post('/api/v1/register', cors(corsOptions), async (req, res) => {
                                 console.log(`User ${username} apikey: ${apikey}`);
                                 req.session.loggedin = true;
                                 req.session.username = username;
+                                req.session.save();
+                                console.log(req.session);
                                 res.status(200);
                                 return res.send({apikey: `${apikey}`});
                             }
