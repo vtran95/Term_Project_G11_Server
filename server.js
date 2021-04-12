@@ -124,6 +124,7 @@ app.post('/api/v1/login', (req, res) => {
                     console.log(`User ${username} logged in`);
                     req.session.loggedin = true;
                     req.session.username = username;
+                    req.session.save();
                     res.status(200);
                     console.log(req.session);
                     if (username == process.env.admin) {
