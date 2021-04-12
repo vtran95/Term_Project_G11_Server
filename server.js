@@ -1,5 +1,6 @@
 const express = require('express');
-const session = require('express-session');
+// const session = require('express-session');
+const session = require('cookie-session');
 const cors = require('cors');
 const mysql = require('mysql');
 // const path = require('path');
@@ -20,6 +21,11 @@ const con =  mysql.createPool( {
 const app = express();
 
 app.use('*', cors());
+const corsOptions = {
+    origin: 'https://comp4537-termproj.herokuapp.com',
+    credentials: true
+}
+
 app.set('trust proxy', true);
 app.use(session({
     secret: 'secret',
@@ -110,6 +116,8 @@ app.post('/api/v1/login', (req, res) => {
         res.status(400);
         return res.send({'error': 'Missing parameters'});
     }
+
+    res.setHeader('Access-Control-Allow-Credentials', true);
 
     con.query(searchUserSQL, async (error, results, fields) => { 
         console.log(results);     
