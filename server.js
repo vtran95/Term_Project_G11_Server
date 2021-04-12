@@ -35,23 +35,6 @@ app.use(express.json());
 
 // Register user
 app.post('/api/v1/register', async (req, res) => {
-
-    // let createTable = "CREATE TABLE IF NOT EXISTS User (id INT AUTO_INCREMENT, username VARCHAR(255) UNIQUE NOT NULL, password VARCHAR(255) UNIQUE NOT NULL, PRIMARY KEY (id))";
-    // let createTable = "CREATE TABLE IF NOT EXISTS Apikey (id INT AUTO_INCREMENT, userkey VARCHAR(255), username VARCHAR(255) UNIQUE, stat INT, PRIMARY KEY (id), CONSTRAINT fk_has_user FOREIGN KEY(username) REFERENCES User(username))";
-    // const checkUser = `SELECT * FROM User`;
-    // let dropTable = `DROP TABLE Apikey`;
-    // const checkStats = `SELECT * FROM Apikey`;
-    // con.query(checkStats, (err, result, fields) => {
-    //     console.log(result);
-    //     if (err) {
-    //         console.log(err);
-    //         return res.sendStatus(503);
-    //     }
-    //     // console.log('apikey table created');
-    //     console.log('apikey table');
-    //     return res.send();
-    // });
-
     const username = req.body.username;
     const pass = req.body.password;
     console.log("pass and salt");
@@ -179,23 +162,6 @@ app.delete('/api/v1/logout', (req, res) => {
 
 // GET - Retrieve all Workouts
 app.get('/api/v1/workouts', async (req, res) => {
-    // const createTableQuery = "CREATE TABLE IF NOT EXISTS Workout (id INT AUTO_INCREMENT, name VARCHAR(255), category VARCHAR(255), instructions VARCHAR(1024), equipment VARCHAR(255), amounts INT, PRIMARY KEY (id))";
-    // const drop = 'DROP TABLE Workout';
-
-    // const createTableQuery = "CREATE TABLE IF NOT EXISTS Session (id INT AUTO_INCREMENT, name VARCHAR(255), time FLOAT, PRIMARY KEY (id))";
-    // const createStat = "INSERT INTO ApiStats (method, endpoint, requests) VALUES ('POST', '/api/v1/add_session', 0)";
-    
-
-    // con.query(createStat, (err, result, fields) => {
-    //     if (err) {
-    //         console.log(err);
-    //         return res.sendStatus(503);
-    //     }
-    //     // console.log('Session table created');
-    //     console.log('Session get all');
-    //     return res.send();
-    // });
-
     if (!req.session) {
         res.status(401);
         return res.send({msg: 'Must be logged in!'});
@@ -204,7 +170,7 @@ app.get('/api/v1/workouts', async (req, res) => {
     console.log(req.session);
     console.log(req.query);
     const acceptRequest = await auth(req.session.username, req.query.apikey);
-    if (!acceptRequest && req.query.apikey != process.env.masterkey) {
+    if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
         return res.send({msg: 'Unauthorized request; incorrect apikey.'});
@@ -249,7 +215,7 @@ app.post('/api/v1/add_exercise', async (req, res) => {
     }
     console.log(req.session);
     const acceptRequest = await auth(req.session.username, req.query.apikey);
-    if (!acceptRequest) {
+    if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
         return res.send({msg: 'Unauthorized request; incorrect apikey.'});
@@ -300,7 +266,7 @@ app.get('/api/v1/random', async (req, res) => {
     }
     console.log(req.session);
     const acceptRequest = await auth(req.session.username, req.query.apikey);
-    if (!acceptRequest) {
+    if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
         return res.send({msg: 'Unauthorized request; incorrect apikey.'});
@@ -338,7 +304,7 @@ app.post('/api/v1/search_fletter/:fletter', async (req, res) => {
     }
     console.log(req.session);
     const acceptRequest = await auth(req.session.username, req.query.apikey);
-    if (!acceptRequest) {
+    if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
         return res.send({msg: 'Unauthorized request; incorrect apikey.'});
@@ -389,7 +355,7 @@ app.get('/api/v1/search_name/:name', async (req, res) => {
     }
     console.log(req.session);
     const acceptRequest = await auth(req.session.username, req.query.apikey);
-    if (!acceptRequest) {
+    if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
         return res.send({msg: 'Unauthorized request; incorrect apikey.'});
@@ -437,7 +403,7 @@ app.post('/api/v1/search_id/:id', async (req, res) => {
     }
     console.log(req.session);
     const acceptRequest = await auth(req.session.username, req.query.apikey);
-    if (!acceptRequest) {
+    if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
         return res.send({msg: 'Unauthorized request; incorrect apikey.'});
@@ -482,7 +448,7 @@ app.get('/api/v1/category/:category', async (req, res) => {
     }
     console.log(req.session);
     const acceptRequest = await auth(req.session.username, req.query.apikey);
-    if (!acceptRequest) {
+    if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
         return res.send({msg: 'Unauthorized request; incorrect apikey.'});
@@ -528,7 +494,7 @@ app.delete('/api/v1/delete/:name', async (req, res) => {
     }
     console.log(req.session);
     const acceptRequest = await auth(req.session.username, req.query.apikey);
-    if (!acceptRequest) {
+    if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
         return res.send({msg: 'Unauthorized request; incorrect apikey.'});
@@ -570,7 +536,7 @@ app.put('/api/v1/update', async (req, res) => {
     }
     console.log(req.session);
     const acceptRequest = await auth(req.session.username, req.query.apikey);
-    if (!acceptRequest) {
+    if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
         return res.send({msg: 'Unauthorized request; incorrect apikey.'});
@@ -612,7 +578,7 @@ app.get('/api/v1/sessions', async (req, res) => {
     }
     console.log(req.session);
     const acceptRequest = await auth(req.session.username, req.query.apikey);
-    if (!acceptRequest) {
+    if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
         return res.send({msg: 'Unauthorized request; incorrect apikey.'});
@@ -656,7 +622,7 @@ app.post('/api/v1/add_session', async (req, res) => {
     }
     console.log(req.session);
     const acceptRequest = await auth(req.session.username, req.query.apikey);
-    if (!acceptRequest) {
+    if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
         return res.send({msg: 'Unauthorized request; incorrect apikey.'});
@@ -669,8 +635,6 @@ app.post('/api/v1/add_session', async (req, res) => {
         res.status(400);
         return res.send({'error': 'Missing parameters'});
     }
-
-    // const createTableQuery = "CREATE TABLE IF NOT EXISTS Session (id INT AUTO_INCREMENT, name VARCHAR(255), time FLOAT, PRIMARY KEY (id))";
 
     let postSQL = `INSERT INTO Session (name, time) VALUES ('${name}', '${time}')`;
 
@@ -706,7 +670,7 @@ app.delete('/api/v1/delete_session/:name', async (req, res) => {
     }
     console.log(req.session);
     const acceptRequest = await auth(req.session.username, req.query.apikey);
-    if (!acceptRequest) {
+    if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
         return res.send({msg: 'Unauthorized request; incorrect apikey.'});
@@ -748,7 +712,7 @@ app.put('/api/v1/update_session', async (req, res) => {
     }
     console.log(req.session);
     const acceptRequest = await auth(req.session.username, req.query.apikey);
-    if (!acceptRequest) {
+    if (!acceptRequest && (req.query.apikey != process.env.masterkey)) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
         return res.send({msg: 'Unauthorized request; incorrect apikey.'});
@@ -789,8 +753,17 @@ app.put('/api/v1/update_session', async (req, res) => {
 });
 
 // GET - Retrieve all API endpoint stats
-app.get('/api/v1/admin', (req, res) => {
-    // const createTableQuery = "CREATE TABLE IF NOT EXISTS ApiStats (id INT AUTO_INCREMENT, method VARCHAR(255), endpoint VARCHAR(255), requests INT, PRIMARY KEY (id))";
+app.get('/api/v1/admin', async (req, res) => {
+    console.log(req.session);
+    if ( !req.session || !req.session.username || !(await authenticateAdmin(req.session.username)) ) {
+        res.status(401);
+        return res.send({msg: 'Must be logged in to admin!'});
+    }
+    // const isAdmin = await authenticateAdmin(req.session.username);
+    // if (!isAdmin) {
+    //     res.status(401);
+    //     return res.send({msg: 'Must be logged in to admin!'});
+    // }
 
     const sql = 'SELECT * FROM ApiStats';
     con.query(sql, (err, result, fields) => {
@@ -834,3 +807,46 @@ const auth = (username, rcvKey) => {
         })
     });
 };
+
+authenticateAdmin = (username) => {
+    return new Promise(resolve => {
+        resolve(username == process.env.admin);
+    });
+}
+
+    // let createTable = "CREATE TABLE IF NOT EXISTS User (id INT AUTO_INCREMENT, username VARCHAR(255) UNIQUE NOT NULL, password VARCHAR(255) UNIQUE NOT NULL, PRIMARY KEY (id))";
+    // let createTable = "CREATE TABLE IF NOT EXISTS Apikey (id INT AUTO_INCREMENT, userkey VARCHAR(255), username VARCHAR(255) UNIQUE, stat INT, PRIMARY KEY (id), CONSTRAINT fk_has_user FOREIGN KEY(username) REFERENCES User(username))";
+    // const checkUser = `SELECT * FROM User`;
+    // let dropTable = `DROP TABLE Apikey`;
+    // const checkStats = `SELECT * FROM Apikey`;
+    // con.query(checkStats, (err, result, fields) => {
+    //     console.log(result);
+    //     if (err) {
+    //         console.log(err);
+    //         return res.sendStatus(503);
+    //     }
+    //     // console.log('apikey table created');
+    //     console.log('apikey table');
+    //     return res.send();
+    // });
+
+    // const createTableQuery = "CREATE TABLE IF NOT EXISTS Workout (id INT AUTO_INCREMENT, name VARCHAR(255), category VARCHAR(255), instructions VARCHAR(1024), equipment VARCHAR(255), amounts INT, PRIMARY KEY (id))";
+    // const drop = 'DROP TABLE Workout';
+
+    // const createTableQuery = "CREATE TABLE IF NOT EXISTS Session (id INT AUTO_INCREMENT, name VARCHAR(255), time FLOAT, PRIMARY KEY (id))";
+    // const createStat = "INSERT INTO ApiStats (method, endpoint, requests) VALUES ('POST', '/api/v1/add_session', 0)";
+    
+
+    // con.query(createStat, (err, result, fields) => {
+    //     if (err) {
+    //         console.log(err);
+    //         return res.sendStatus(503);
+    //     }
+    //     // console.log('Session table created');
+    //     console.log('Session get all');
+    //     return res.send();
+    // });
+
+    // const createTableQuery = "CREATE TABLE IF NOT EXISTS Session (id INT AUTO_INCREMENT, name VARCHAR(255), time FLOAT, PRIMARY KEY (id))";
+
+    // const createTableQuery = "CREATE TABLE IF NOT EXISTS ApiStats (id INT AUTO_INCREMENT, method VARCHAR(255), endpoint VARCHAR(255), requests INT, PRIMARY KEY (id))";
