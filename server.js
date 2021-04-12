@@ -6,8 +6,9 @@ const mysql = require('mysql');
 const url = require('url');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
-const saltRounds = 10;
 const randomString = require('randomstring');
+require('dotenv').config();
+const saltRounds = 10;
 
 const con =  mysql.createPool( {
     host: 'us-cdbr-east-03.cleardb.com',
