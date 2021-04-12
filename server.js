@@ -25,7 +25,7 @@ const store = new SQLStore({}, con);
 const app = express();
 
 // app.use('*', cors());
-app.options('*', cors());
+
 const whitelist = ['https://comp4537-termproj.herokuapp.com', 'http://localhost:5000'];
 const corsOptions = {
     origin: function (origin, callback) {
@@ -37,6 +37,7 @@ const corsOptions = {
     },
     credentials: true
 }
+app.options('*', cors(corsOptions));
 
 app.set('trust proxy', 1);
 app.use(session({
