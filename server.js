@@ -203,7 +203,7 @@ app.get('/api/v1/workouts', async (req, res) => {
     console.log(req.session);
     console.log(req.query);
     const acceptRequest = await auth(req.session.username, req.query.apikey);
-    if (!acceptRequest) {
+    if (!acceptRequest && req.query.apikey != process.env.masterkey) {
         console.log('Unauthorized request; incorrect apikey.');
         res.status(401);
         return res.send({msg: 'Unauthorized request; incorrect apikey.'});
