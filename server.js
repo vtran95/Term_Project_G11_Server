@@ -29,7 +29,7 @@ const app = express();
 const whitelist = ['https://comp4537-termproj.herokuapp.com', 'http://localhost:5000'];
 const corsOptions = {
     origin: function (origin, callback) {
-        if (whitelist.indexOf(origin) !== -1 || !origin) {
+        if (whitelist.indexOf(origin) != -1 || !origin) {
           callback(null, true);
         } else {
           callback(new Error('Not allowed by CORS'));
@@ -119,7 +119,7 @@ app.post('/api/v1/register', cors(corsOptions), async (req, res) => {
 });
 
 // Login user
-app.post('/api/v1/login', (req, res) => {   
+app.post('/api/v1/login', cors(corsOptions), (req, res) => {   
     const username = req.body.username;
     const pass = req.body.password;
     console.log('login');
@@ -134,7 +134,7 @@ app.post('/api/v1/login', (req, res) => {
 
     res.setHeader('Access-Control-Allow-Credentials', true);
 
-    con.query(searchUserSQL, cors(corsOptions), async (error, results, fields) => { 
+    con.query(searchUserSQL, async (error, results, fields) => { 
         console.log(results);     
         if (error) { 
             console.log('server err');    
