@@ -822,7 +822,7 @@ const auth = (rcvKey) => {
     console.log(rcvKey);
     return new Promise((resolve, reject) => {
         // let checkKey = `SELECT * FROM Apikey WHERE username = '${username}'`;
-        let checkKey = `SELECT * FROM Apikey WHERE userkey = '${rcvkey}'`;
+        let checkKey = `SELECT * FROM Apikey WHERE userkey = '${rcvKey}'`;
         console.log('auth');
         con.query(checkKey, (error, results, fields) => {
             console.log(results);
