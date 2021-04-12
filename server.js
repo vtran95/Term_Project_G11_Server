@@ -1,6 +1,8 @@
+require('dotenv').config();
 const express = require('express');
-// const session = require('express-session');
-const session = require('cookie-session');
+const session = require('express-session');
+const SQLStore = require('express-mysql-session')(session);
+// const session = require('cookie-session');
 const cors = require('cors');
 const mysql = require('mysql');
 // const path = require('path');
@@ -8,15 +10,17 @@ const url = require('url');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const randomString = require('randomstring');
-require('dotenv').config();
 const saltRounds = 10;
 
-const con =  mysql.createPool( {
+const options = {
     host: 'us-cdbr-east-03.cleardb.com',
     user: 'bdd578191d96cc',
     password: '8bde2986',
     database: 'heroku_1ddda9c9cbecd43'
-});
+}
+
+const con =  mysql.createPool(options);
+const store = new SQLStore({}, con);
 
 const app = express();
 
@@ -26,14 +30,16 @@ const corsOptions = {
     credentials: true
 }
 
-app.set('trust proxy', true);
+app.set('trust proxy', 1);
 app.use(session({
     secret: 'secret',
     resave: false,
+    store: store,
     saveUninitialized:  true,
     cookie: {secure: true}
 }));
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 
 // temp
 app.set('view options', {layout: false});
