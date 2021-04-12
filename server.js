@@ -24,9 +24,16 @@ const store = new SQLStore({}, con);
 
 const app = express();
 
-app.use('*', cors());
+// app.use('*', cors());
+const whitelist = ['https://comp4537-termproj.herokuapp.com', 'http://localhost:5000'];
 const corsOptions = {
-    origin: 'https://comp4537-termproj.herokuapp.com',
+    origin: function (origin, callback) {
+        if (whitelist.indexOf(origin) !== -1) {
+          callback(null, true);
+        } else {
+          callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
 }
 
@@ -48,7 +55,7 @@ app.use(express.json());
 //
 
 // Register user
-app.post('/api/v1/register', async (req, res) => {
+app.post('/api/v1/register', cors(corsOptions), async (req, res) => {
     const username = req.body.username;
     const pass = req.body.password;
     console.log("pass and salt");
@@ -125,7 +132,7 @@ app.post('/api/v1/login', (req, res) => {
 
     res.setHeader('Access-Control-Allow-Credentials', true);
 
-    con.query(searchUserSQL, async (error, results, fields) => { 
+    con.query(searchUserSQL, cors(corsOptions), async (error, results, fields) => { 
         console.log(results);     
         if (error) { 
             console.log('server err');    
@@ -179,7 +186,7 @@ app.delete('/api/v1/logout', (req, res) => {
 });
 
 // GET - Retrieve all Workouts
-app.get('/api/v1/workouts', async (req, res) => {
+app.get('/api/v1/workouts', cors(corsOptions), async (req, res) => {
     if (!req.session) {
         res.status(401);
         return res.send({msg: 'Must be logged in!'});
@@ -226,7 +233,7 @@ app.get('/api/v1/workouts', async (req, res) => {
 });
 
 // POST - Create a new workout
-app.post('/api/v1/add_exercise', async (req, res) => {
+app.post('/api/v1/add_exercise', cors(corsOptions), async (req, res) => {
     if (!req.session) {
         res.status(401);
         return res.send({msg: 'Must be logged in!'});
@@ -277,7 +284,7 @@ app.post('/api/v1/add_exercise', async (req, res) => {
 });
 
 // GET - Get random workout
-app.get('/api/v1/random', async (req, res) => {
+app.get('/api/v1/random', cors(corsOptions), async (req, res) => {
     if (!req.session) {
         res.status(401);
         return res.send({msg: 'Must be logged in!'});
@@ -315,7 +322,7 @@ app.get('/api/v1/random', async (req, res) => {
 });
 
 // POST - Get specific workout by first letter
-app.post('/api/v1/search_fletter/:fletter', async (req, res) => {
+app.post('/api/v1/search_fletter/:fletter', cors(corsOptions), async (req, res) => {
     if (!req.session) {
         res.status(401);
         return res.send({msg: 'Must be logged in!'});
@@ -366,7 +373,7 @@ app.post('/api/v1/search_fletter/:fletter', async (req, res) => {
 });
 
 // GET - Get specific workout by name
-app.get('/api/v1/search_name/:name', async (req, res) => {
+app.get('/api/v1/search_name/:name', cors(corsOptions), async (req, res) => {
     if (!req.session) {
         res.status(401);
         return res.send({msg: 'Must be logged in!'});
@@ -414,7 +421,7 @@ app.get('/api/v1/search_name/:name', async (req, res) => {
 });
 
 // POST - Get specific workout by id
-app.post('/api/v1/search_id/:id', async (req, res) => {
+app.post('/api/v1/search_id/:id', cors(corsOptions), async (req, res) => {
     if (!req.session) {
         res.status(401);
         return res.send({msg: 'Must be logged in!'});
@@ -459,7 +466,7 @@ app.post('/api/v1/search_id/:id', async (req, res) => {
 });
 
 // GET - Get specific workout by category
-app.get('/api/v1/category/:category', async (req, res) => {
+app.get('/api/v1/category/:category', cors(corsOptions), async (req, res) => {
     if (!req.session) {
         res.status(401);
         return res.send({msg: 'Must be logged in!'});
@@ -505,7 +512,7 @@ app.get('/api/v1/category/:category', async (req, res) => {
 });
 
 // DELETE - Delete a workout
-app.delete('/api/v1/delete/:name', async (req, res) => {
+app.delete('/api/v1/delete/:name', cors(corsOptions), async (req, res) => {
     if (!req.session) {
         res.status(401);
         return res.send({msg: 'Must be logged in!'});
@@ -547,7 +554,7 @@ app.delete('/api/v1/delete/:name', async (req, res) => {
 });
 
 // PUT - Update a workout's name
-app.put('/api/v1/update', async (req, res) => {
+app.put('/api/v1/update', cors(corsOptions), async (req, res) => {
     if (!req.session) {
         res.status(401);
         return res.send({msg: 'Must be logged in!'});
@@ -589,7 +596,7 @@ app.put('/api/v1/update', async (req, res) => {
 });
 
 // GET - Retrieve all Sessions
-app.get('/api/v1/sessions', async (req, res) => {
+app.get('/api/v1/sessions', cors(corsOptions), async (req, res) => {
     if (!req.session) {
         res.status(401);
         return res.send({msg: 'Must be logged in!'});
@@ -633,7 +640,7 @@ app.get('/api/v1/sessions', async (req, res) => {
 });
 
 // POST - Create a new workout session
-app.post('/api/v1/add_session', async (req, res) => {
+app.post('/api/v1/add_session', cors(corsOptions), async (req, res) => {
     if (!req.session) {
         res.status(401);
         return res.send({msg: 'Must be logged in!'});
@@ -681,7 +688,7 @@ app.post('/api/v1/add_session', async (req, res) => {
 });
 
 // DELETE - Delete a workout session
-app.delete('/api/v1/delete_session/:name', async (req, res) => {
+app.delete('/api/v1/delete_session/:name', cors(corsOptions), async (req, res) => {
     if (!req.session) {
         res.status(401);
         return res.send({msg: 'Must be logged in!'});
@@ -723,7 +730,7 @@ app.delete('/api/v1/delete_session/:name', async (req, res) => {
 });
 
 // PUT - Update a workout session's time
-app.put('/api/v1/update_session', async (req, res) => {
+app.put('/api/v1/update_session', cors(corsOptions), async (req, res) => {
     if (!req.session) {
         res.status(401);
         return res.send({msg: 'Must be logged in!'});
@@ -771,7 +778,7 @@ app.put('/api/v1/update_session', async (req, res) => {
 });
 
 // GET - Retrieve all API endpoint stats
-app.get('/api/v1/admin', async (req, res) => {
+app.get('/api/v1/admin', cors(corsOptions), async (req, res) => {
     console.log(req.session);
     if ( !req.session || !req.session.username || !(await authenticateAdmin(req.session.username)) ) {
         res.status(401);
