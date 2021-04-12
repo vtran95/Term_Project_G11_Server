@@ -826,16 +826,18 @@ const auth = (username, rcvKey) => {
     console.log(username);
     console.log(rcvKey);
     return new Promise(resolve => {
-        let checkKey = `SELECT * FROM Apikey WHERE username = '${username}'`;
+        // let checkKey = `SELECT * FROM Apikey WHERE username = '${username}'`;
+        let checkKey = `SELECT * FROM Apikey WHERE userkey = '${rcvkey}'`;
         console.log('auth');
         con.query(checkKey, (error, results, fields) => {
             console.log(results);
             if (error) {
                 console.log('Error1');         
             } else {       
-                if (results.length > 0 && (results[0].userkey == rcvKey)) {
-                    resolve(true);
-                }
+                // if (results.length > 0 && (results[0].userkey == rcvKey)) {
+                //     resolve(true);
+                // }
+                resolve(true);
             }
             resolve(false);
         })
