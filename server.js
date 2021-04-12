@@ -517,7 +517,7 @@ app.put('/api/v1/update_session', (req, res) => {
     const name = req.body.name;
     const time = req.body.time;
 
-    const updateSQL = `UPDATE Workout SET time = '${time}' WHERE Workout.name = '${name}'`;
+    const updateSQL = `UPDATE Session SET time = '${time}' WHERE Workout.name = '${name}'`;
     con.query(updateSQL, (err, result, fields) => {
         if (err) {
             console.log(err);
