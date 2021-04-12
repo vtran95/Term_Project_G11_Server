@@ -20,7 +20,9 @@ const options = {
 }
 
 const con =  mysql.createPool(options);
-const store = new SQLStore({}, con);
+const sessionStore = new SQLStore({
+    expiration: 60 * 10000
+}, con);
 
 const app = express();
 
@@ -43,9 +45,12 @@ app.set('trust proxy', 1);
 app.use(session({
     secret: 'secret',
     resave: false,
-    store: store,
+    store: sessionStore,
     saveUninitialized:  true,
-    cookie: {secure: true}
+    cookie: {
+        secure: true,
+        maxAge: 60 * 10000
+    }
 }));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
